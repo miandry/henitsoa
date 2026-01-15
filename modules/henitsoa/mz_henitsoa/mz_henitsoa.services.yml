@@ -1,0 +1,13 @@
+services:
+  carnet_henitsoa:
+    class: Drupal\mz_henitsoa\CarnetHenitsoa
+    arguments: []
+  mz_henitsoa.twig.extension:
+    class: Drupal\mz_henitsoa\TwigExtension\DefaultTwigExtension
+    arguments: []
+    tags:
+      - { name: twig.extension }
+  mz_henitsoa.default:
+    class: Drupal\mz_henitsoa\ServiceHenitsoa
+    arguments: []
+    

@@ -1,0 +1,9 @@
+mz_henitsoa.controller:
+  path: '/admin/build'
+  defaults:
+    _controller: '\Drupal\mz_henitsoa\Controller\HenitsoaController::build'
+    _title: 'Techargement document'
+  requirements:
+     _permission: 'access administration pages'
+  options:
+     _admin_route: TRUE
