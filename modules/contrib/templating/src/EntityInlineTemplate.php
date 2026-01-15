@@ -23,6 +23,7 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     $config_name = "view--" . $theme . '-' . trim($view_name) . '-' . trim($view_display);
     $suggestion_1 = $this->formatName($config_name);
     $templates_views = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
       ->condition('type', 'templating')
       ->condition('status', '1')
       ->condition('title', $suggestion_1, 'STARTS_WITH')
@@ -49,12 +50,12 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
 
   function getEntityFromVariable($var, $entity = null)
   {
-    if ($entity == "block"  && isset($var["content"]['#block_content'])) {
+    if ($entity == "block" && isset($var["content"]['#block_content'])) {
       $content = $var["content"];
-      $entity_result =  (is_object($content['#block_content']))? $content['#block_content'] : $content['content']['#block_content'];
+      $entity_result = (is_object($content['#block_content'])) ? $content['#block_content'] : $content['content']['#block_content'];
     } else {
 
-      $entity_result =    isset($var['elements']["#" . $entity])?$var['elements']["#" . $entity]:null;
+      $entity_result = isset($var['elements']["#" . $entity]) ? $var['elements']["#" . $entity] : null;
     }
 
     return $entity_result;
@@ -81,7 +82,7 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     if (!$theme) {
       return false;
     }
-    if($mode_view == null){
+    if ($mode_view == null) {
       $mode_view = "full";
     }
     $entity_name = $entity->getEntityTypeId();
@@ -92,7 +93,7 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     $content = $this->getTemplatingByTitle($hook_name);
     if (!is_object($content)) {
       $theme_base = $this->baseTheme($theme);
-      $hook_name_base =  $this->formatName($entity_name . '--' . $theme_base . '-' . $bundle . "-" . $mode_view . ".html.twig");
+      $hook_name_base = $this->formatName($entity_name . '--' . $theme_base . '-' . $bundle . "-" . $mode_view . ".html.twig");
       $content_base = $this->getTemplatingByTitle($hook_name_base);
       if (is_object($content_base)) {
         $content = $content_base;
@@ -124,6 +125,7 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
   {
     $block_id = 0;
     $query = \Drupal::entityQuery($type);
+    $query->accessCheck(FALSE);
     $query->condition('type', $bundle);
     $query->range(0, 1);
     $res = $query->execute();
@@ -176,13 +178,15 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
             if ($is_file) {
               $file = File::load($node->field_lib_file->target_id);
               if (is_object($file)) {
-                $url = URl::fromUri(file_create_url($file->getFileUri()))->toString();
+                $url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
               }
             }
           }
           // if css or js
           if ($url) {
-            if(!isset($output[$type . '_' . $position])){ $output[$type . '_' . $position] = "" ;}
+            if (!isset($output[$type . '_' . $position])) {
+              $output[$type . '_' . $position] = "";
+            }
             if ($type == "css") {
               $output[$type . '_' . $position] = $output[$type . '_' . $position] . '<link rel="stylesheet" href="' . $url . '" crossorigin="" />';
             }
@@ -202,6 +206,7 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
   {
     $results = false;
     $libs = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
       ->condition('type', 'library')
       ->condition('status', '1')
       ->execute();
@@ -243,67 +248,74 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
 
     return new RedirectResponse(Url::fromRoute('view.templating.page_1')->toString());
   }
-  public function getFileNameEntity($template){
-    $bundle = $template->field_templating_bundle->value ;
-    $entity_name = $template->field_templating_entity_type->value ;
-    $bundle =   str_replace('_','-',$bundle);  
-    $name_file =  $entity_name ;
-    if($bundle ==  'block' || $bundle == 'block_content' 
-    || $entity_name == 'block' ||   $entity_name == 'block_content' ){
-      $name_file =  'block' ;
+  public function getFileNameEntity($template)
+  {
+    $bundle = $template->field_templating_bundle->value;
+    $entity_name = $template->field_templating_entity_type->value;
+    $bundle = str_replace('_', '-', $bundle);
+    $name_file = $entity_name;
+    if (
+      $bundle == 'block' || $bundle == 'block_content'
+      || $entity_name == 'block' || $entity_name == 'block_content'
+    ) {
+      $name_file = 'block';
     }
-    if($bundle == 'page'){
-      $name_file =  'page' ;
+    if ($bundle == 'page') {
+      $name_file = 'page';
     }
-    return  $name_file ;
+    return $name_file;
   }
-  public function topTemplate($template){
-    $name = $template->title->value ;
+  public function topTemplate($template)
+  {
+    $name = $template->title->value;
     if (strpos($name, 'block-content') === 0) {
-      $name = str_replace('block-content','block',$name);
+      $name = str_replace('block-content', 'block', $name);
     }
     $name_file = $this->getFileNameEntity($template);
-    $name_css = str_replace('.twig','.css',$name);
-    $name_render = str_replace('.','_',$name);
-    $txt = '{% extends get_module_path("templating") ~ "/templates/misc/'.$name_file.'.html.twig" %}'.PHP_EOL ;
-    $txt = $txt.'{% block templating_content %}'.PHP_EOL ;
-    $txt = $txt.'{% set path_css = directory ~ "/templates/templating/css/'.$name_css.'" %}'.PHP_EOL;
-    $txt = $txt.'{% set css = include(path_css) %}'.PHP_EOL;
-    $txt = $txt.'{{render_css(css,"'.$name_render.'")}}'.PHP_EOL;
-    return  $txt ;
+    $name_css = str_replace('.twig', '.css', $name);
+    $name_render = str_replace('.', '_', $name);
+    $txt = '{% extends get_module_path("templating") ~ "/templates/misc/' . $name_file . '.html.twig" %}' . PHP_EOL;
+    $txt = $txt . '{% block templating_content %}' . PHP_EOL;
+    $txt = $txt . '{% set path_css = directory ~ "/templates/templating/css/' . $name_css . '" %}' . PHP_EOL;
+    $txt = $txt . '{% set css = include(path_css) %}' . PHP_EOL;
+    $txt = $txt . '{{render_css(css,"' . $name_render . '")}}' . PHP_EOL;
+    return $txt;
   }
-  public function footerTemplate($txt) {
-    $txt = $txt.PHP_EOL.'{% endblock %}';
-    return  $txt ;
+  public function footerTemplate($txt)
+  {
+    $txt = $txt . PHP_EOL . '{% endblock %}';
+    return $txt;
   }
-  public function exportHtmlTemplating($template){
+  public function exportHtmlTemplating($template)
+  {
 
     $txt = $this->topTemplate($template);
     $file_path = $this->getFilepathTemplating($template);
-    $txt = $txt.$template->field_templating_html->value;
-    
+    $txt = $txt . $template->field_templating_html->value;
+
     $myfile = fopen($file_path, "wr") or \Drupal::logger('templating')->error($file_path . "can not write");
     $txt = $this->footerTemplate($txt);
     fwrite($myfile, $txt);
     fclose($myfile);
-      $message = 'Template html in '.$file_path.' export successfully';
-      \Drupal::messenger()->addMessage($message);
+    $message = 'Template html in ' . $file_path . ' export successfully';
+    \Drupal::messenger()->addMessage($message);
 
   }
-  public function exportCssTemplating($template){
+  public function exportCssTemplating($template)
+  {
     $file_path = $this->getFilepathCSSTemplating($template);
-   
+
     $myfile = fopen($file_path, "wr") or \Drupal::logger('templating')->error($file_path . "can not write");
     $txt = $template->field_templating_css->value;
     fwrite($myfile, $txt);
     fclose($myfile);
-     $message = 'Template css in '.$file_path.' export successfully';
-      \Drupal::messenger()->addMessage($message);
+    $message = 'Template css in ' . $file_path . ' export successfully';
+    \Drupal::messenger()->addMessage($message);
 
   }
   public function exportTemplating($template)
   {  //kint($template);die();
-   
+
     $this->exportHtmlTemplating($template);
     $this->exportCssTemplating($template);
     return true;
@@ -323,36 +335,38 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     $diffFormatter->show_header = FALSE;
     return $diffFormatter->format($diff);
   }
-  public function getTargetBundleForm($variables){
-    if(isset($variables["element"]) &&
-    isset($variables["element"]["#process"])
-    ){
-    foreach ($variables["element"]["#process"] as $key => $item) { 
-      if(is_array($item)){
-        foreach ($item as $key_child => $child) { 
-          if($child instanceof EntityFormDisplay) {
-            return ($child->getTargetBundle());
+  public function getTargetBundleForm($variables)
+  {
+    if (
+      isset($variables["element"]) &&
+      isset($variables["element"]["#process"])
+    ) {
+      foreach ($variables["element"]["#process"] as $key => $item) {
+        if (is_array($item)) {
+          foreach ($item as $key_child => $child) {
+            if ($child instanceof EntityFormDisplay) {
+              return ($child->getTargetBundle());
+            }
           }
         }
       }
     }
-    }
-    return false ;
+    return false;
   }
   public function getFilepathTemplating($template)
   {
     $file_name = $template->label();
     if (strpos($file_name, 'block-content') === 0) {
-      $file_name = str_replace('block-content','block',$file_name);
+      $file_name = str_replace('block-content', 'block', $file_name);
     }
     $themeHandler = \Drupal::service('theme_handler');
-    $themePath = $themeHandler->getTheme($template->field_templating_theme->value)->getPath(); 
-    $directory = (DRUPAL_ROOT . '/' . $themePath . '/templates/templating/' );
+    $themePath = $themeHandler->getTheme($template->field_templating_theme->value)->getPath();
+    $directory = (\Drupal::root() . '/' . $themePath . '/templates/templating/');
     if (!is_dir($directory)) {
       if (!mkdir($directory, 0755, true)) {
-          $message = "Failed to create directory ".$directory;
-          \Drupal::logger('templating')->error( $message);
-          return false ;
+        $message = "Failed to create directory " . $directory;
+        \Drupal::logger('templating')->error($message);
+        return false;
       }
     }
     return $directory . $file_name;
@@ -361,60 +375,62 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
   {
     $file_name = $template->label();
     if (strpos($file_name, 'block-content') === 0) {
-      $file_name = str_replace('block-content','block',$file_name);
+      $file_name = str_replace('block-content', 'block', $file_name);
     }
-    $file_name = str_replace('.twig','.css',$file_name);
+    $file_name = str_replace('.twig', '.css', $file_name);
     $themeHandler = \Drupal::service('theme_handler');
     $themePath = $themeHandler->getTheme($template->field_templating_theme->value)->getPath();
-    $directory = (DRUPAL_ROOT . '/' . $themePath . '/templates/templating/css/' );
+    $directory = (\Drupal::root() . '/' . $themePath . '/templates/templating/css/');
     if (!is_dir($directory)) {
       if (!mkdir($directory, 0755, true)) {
-          $message = "Failed to create directory ".$directory;
-          \Drupal::logger('templating')->error( $message);
-          return false ;
+        $message = "Failed to create directory " . $directory;
+        \Drupal::logger('templating')->error($message);
+        return false;
       }
     }
-    return  $directory.$file_name;
+    return $directory . $file_name;
   }
-  public function getRenderTemplateForm($content){
+  public function getRenderTemplateForm($content)
+  {
     $output = false;
     $current_theme = \Drupal::theme()->getActiveTheme();
     $theme = $current_theme->getName();
-    if(isset($content["element"]) &&
-    isset($content["element"]["#entity_type"]) && 
-    isset($content["element"]["#process"]) &&
-    $content["element"]["#form_id"] != "user_register_form" &&
-    $content["element"]["#form_id"] != "user_login_form" &&
-    $content["element"]["#form_id"] != "user_pass_form"
-    ){
+    if (
+      isset($content["element"]) &&
+      isset($content["element"]["#entity_type"]) &&
+      isset($content["element"]["#process"]) &&
+      $content["element"]["#form_id"] != "user_register_form" &&
+      $content["element"]["#form_id"] != "user_login_form" &&
+      $content["element"]["#form_id"] != "user_pass_form"
+    ) {
       $entity_type = $content["element"]["#entity_type"];
       $bundle = "";
-      foreach ($content["element"]["#process"] as $key => $item) { 
-          if(is_array($item)){
-            foreach ($item as $key_child => $child) { 
-              if($child instanceof EntityFormDisplay) {
-                $bundle = ($child->getTargetBundle());
-              }
+      foreach ($content["element"]["#process"] as $key => $item) {
+        if (is_array($item)) {
+          foreach ($item as $key_child => $child) {
+            if ($child instanceof EntityFormDisplay) {
+              $bundle = ($child->getTargetBundle());
             }
           }
+        }
       }
-      $hook_name_base = $this->formatName("form--".$entity_type."-". $theme . "-".$bundle."-full.html.twig");   
+      $hook_name_base = $this->formatName("form--" . $entity_type . "-" . $theme . "-" . $bundle . "-full.html.twig");
       $content_base = $this->getTemplatingByTitle($hook_name_base);
       if (is_object($content_base)) {
         $output = $content_base->field_templating_html->value;
       }
     }
     if ($output) {
-        return [
-          '#type' => 'inline_template',
-          '#template' => $output,
-          '#context' => [
-            'content' => $content
-          ],
-        ];
-    
+      return [
+        '#type' => 'inline_template',
+        '#template' => $output,
+        '#context' => [
+          'content' => $content
+        ],
+      ];
+
     }
-    return false ;
+    return false;
 
   }
   public function getRenderTemplateCustom($content)
@@ -422,8 +438,8 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     $output = false;
     $current_theme = \Drupal::theme()->getActiveTheme();
     $theme = $current_theme->getName();
-    if(isset($content['element']) && isset($content['element']['form_id']) && isset($content['element']['form_id']['#id'])){
-      $hook_name_base = $this->formatName("custom--".$theme."-".$content['element']['form_id']['#id'].".html.twig");
+    if (isset($content['element']) && isset($content['element']['form_id']) && isset($content['element']['form_id']['#id'])) {
+      $hook_name_base = $this->formatName("custom--" . $theme . "-" . $content['element']['form_id']['#id'] . ".html.twig");
       $content_base = $this->getTemplatingByTitle($hook_name_base);
       if (is_object($content_base)) {
         $output = $content_base->field_templating_html->value;
@@ -448,7 +464,8 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
     }
     return false;
   }
-  function addLibrary(){
+  function addLibrary()
+  {
     $library_name = 'templating/confirmjs';
     $library_definition = [
       'version' => '1.x',
@@ -459,9 +476,9 @@ class EntityInlineTemplate extends BaseServiceEntityInlineTemplate
         'core/jquery',
       ],
     ];
-  
+
     // Add or modify the library definition.
     \Drupal::service('library.discovery')->setLibraryInfo($library_name, $library_definition);
-  
+
   }
 }

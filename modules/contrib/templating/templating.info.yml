@@ -15,7 +15,7 @@ dependencies:
   - allowed_formats
 # Information added by Drupal.org packaging script on 2018-11-21
 # version: '8.x-1.6'
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^10 || ^11
 # project: 'templating'
 # datestamp: 1542800883
 

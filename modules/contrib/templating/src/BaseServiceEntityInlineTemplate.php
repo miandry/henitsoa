@@ -7,20 +7,22 @@ use Drupal\node\NodeInterface;
 use Drupal\block_content\BlockContentInterface;
 class BaseServiceEntityInlineTemplate
 {
-   public function baseTheme($theme){
-     $enabled_themes = \Drupal::service('theme_handler')->listInfo();
-     $themebase = \Drupal::service('theme_handler')->getBaseThemes($enabled_themes, $theme );
-     $base = false;
-     if(!empty($themebase)){
-       $thmes = array_keys($themebase);
-       $base = end($thmes) ;
-     }
-     return  $base;
-   }
+    public function baseTheme($theme)
+    {
+        $enabled_themes = \Drupal::service('theme_handler')->listInfo();
+        $themebase = \Drupal::service('theme_handler')->getBaseThemes($enabled_themes, $theme);
+        $base = false;
+        if (!empty($themebase)) {
+            $thmes = array_keys($themebase);
+            $base = end($thmes);
+        }
+        return $base;
+    }
     public function isAllowed($path_theme)
     {
         $path_array = explode('/', $path_theme);
-        if (!empty($path_array)
+        if (
+            !empty($path_array)
             && $path_array[0]
             && $path_array[1]
             && $path_array[0] == 'themes' && $path_array[1] == 'custom'
@@ -62,7 +64,7 @@ class BaseServiceEntityInlineTemplate
     public function isExistLocal($config_name)
     {
         $path = $this->getConfigRootPath();
-        $element = DRUPAL_ROOT . $path . '/' . $config_name . '.yml';
+        $element = \Drupal::root() . $path . '/' . $config_name . '.yml';
         if (file_exists($element)) {
             return true;
         }
@@ -114,9 +116,18 @@ class BaseServiceEntityInlineTemplate
     }
     public function minifyJS($javascript)
     {
-        return preg_replace(array("/\s+\n/", "/\n\s+/", "/ +/"), array("\n", "\n ", " "),
-            $javascript);
+        return preg_replace(
+            array("/\s+\n/", "/\n\s+/", "/ +/"),
+            array("\n", "\n ", " "),
+            $javascript
+        );
     }
+
+    public function getConfigRootPath()
+    {
+        return '/config/templates';
+    }
+
     public function getThemeList()
     {
         $themes = \Drupal::service('theme_handler')->listInfo();
@@ -141,10 +152,10 @@ class BaseServiceEntityInlineTemplate
         //$current_theme = \Drupal::theme()->getActiveTheme();
         //$theme = $current_theme->getName();
 
-     // pourquoi ??   
-     //   $config = \Drupal::config('system.theme');    
-     //   $theme = $config->get('default');
-        
+        // pourquoi ??   
+        //   $config = \Drupal::config('system.theme');    
+        //   $theme = $config->get('default');
+
         $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
         $theme = $activeThemeName->getName();
 
@@ -155,12 +166,12 @@ class BaseServiceEntityInlineTemplate
         if ($disable) {
             return false;
         }
-        if($themes == null ){
-            $config = \Drupal::config('system.theme');    
+        if ($themes == null) {
+            $config = \Drupal::config('system.theme');
             $theme = $config->get('default');
         }
-        if($themes && !in_array($theme ,$themes)){
-           return false;
+        if ($themes && !in_array($theme, $themes)) {
+            return false;
         }
         return $theme;
     }
@@ -201,156 +212,170 @@ class BaseServiceEntityInlineTemplate
         }
         return $mode_view_list;
     }
-    public function getRegionList(){
+    public function getRegionList()
+    {
         $result = [];
-        $config_settings = \Drupal::config("template_inline.settings") ;
+        $config_settings = \Drupal::config("template_inline.settings");
         $allowed_theme = $config_settings->get('theme');
         $allowed_theme = array_values($allowed_theme);
-        foreach ($allowed_theme as $theme){
-            if(!is_numeric($theme)){
-              $system_region = system_region_list($theme, $show = REGIONS_ALL);
-              foreach ($system_region as $key => $region){
-                    $result[$key] = $key ;
-              }
+        foreach ($allowed_theme as $theme) {
+            if (!is_numeric($theme)) {
+                $system_region = system_region_list($theme, $show = REGIONS_ALL);
+                foreach ($system_region as $key => $region) {
+                    $result[$key] = $key;
+                }
             }
         }
-        return $result ;
+        return $result;
     }
-    public function getAllAsset(){
+    public function getAllAsset()
+    {
         $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
         $theme = $activeThemeName->getName();
         $list = \Drupal::entityTypeManager()->getStorage('node')
-                ->loadByProperties(['status'=>1,'type' => 'templating','field_templating_theme' => $theme]);
+            ->loadByProperties(['status' => 1, 'type' => 'templating', 'field_templating_theme' => $theme]);
         $asset['css'] = "";
         $asset['js'] = "";
-        foreach ($list as $item){
-            if(is_object($item)){
+        foreach ($list as $item) {
+            if (is_object($item)) {
                 $title = $item->label();
-                $css = $item->field_templating_css->value ;
+                $css = $item->field_templating_css->value;
                 $css = $this->minify(" /* " . $title . " */ " . $css);
-                $asset['css'] = $css. $asset['css'];
+                $asset['css'] = $css . $asset['css'];
 
 
-                $js= $item->field_templating_js->value ;
+                $js = $item->field_templating_js->value;
                 $js = $this->minify(" /* " . $title . " */ " . $js);
-                $asset['js'] = $js. $asset['js'];
+                $asset['js'] = $js . $asset['js'];
             }
         }
-        return  $asset ;
+        return $asset;
     }
-    public function assetCSSTemplateTheme($css,$block_name){
-        $config_settings = \Drupal::config("template_inline.settings") ;
+    public function assetCSSTemplateTheme($css, $block_name)
+    {
+        $config_settings = \Drupal::config("template_inline.settings");
         $current_css = $config_settings->get('asset_css');
-        $current_css[$block_name] = $css ;
+        $current_css[$block_name] = $css;
         \Drupal::configFactory()->getEditable('template_inline.settings')
-        ->set('asset_css', $current_css)
-        ->save();
+            ->set('asset_css', $current_css)
+            ->save();
     }
-    public function buildCSSTemplateTheme(){
-        $config_settings = \Drupal::config("template_inline.settings") ;
+    public function buildCSSTemplateTheme()
+    {
+        $config_settings = \Drupal::config("template_inline.settings");
         $current_css = $config_settings->get('asset_css');
         $asset_css = "";
-        if(!empty($current_css) ){
-            foreach ($current_css as $key=> $item){
+        if (!empty($current_css)) {
+            foreach ($current_css as $key => $item) {
                 $css = $this->minify(" /* " . $key . " */ " . $item);
-                $asset_css = $asset_css.$css;
+                $asset_css = $asset_css . $css;
             }
         }
 
-        return  $asset_css ;
+        return $asset_css;
     }
-    public function getTemplatingByEntity($entity){
+    public function getTemplatingByEntity($entity)
+    {
 
         $theme = $this->is_allowed();
-        if(!$theme){
+        if (!$theme) {
             return false;
         }
-        $entity_name  = $entity->getEntityTypeId();
+        $entity_name = $entity->getEntityTypeId();
         $bundle = $entity->bundle();
         $id = $entity->id();
-        $output = false ;
+        $output = false;
         $mode_view = 'full';
-        $hook_name = $entity_name.'--'.$theme.'-'.$bundle."-".$mode_view.".html.twig" ;
+        $hook_name = $entity_name . '--' . $theme . '-' . $bundle . "-" . $mode_view . ".html.twig";
         $node_template = ($this->getTemplatingByTitle($hook_name));
-        if(is_object($node_template)){
+        if (is_object($node_template)) {
             return $node_template;
         } else {
-            return false ;
+            return false;
         }
     }
-    public function getTemplatingById($id){
-        
-        $array = ['type' => 'templating','status' => true ,'nid' => $id];
+    public function getTemplatingById($id)
+    {
+
+        $array = ['type' => 'templating', 'status' => true, 'nid' => $id];
         $nodes = \Drupal::entityTypeManager()->getStorage('node')
-        ->loadByProperties($array);
-        return  end($nodes);
-    }
-    public function getTemplatingByTitle($hook_name){
-        $array = ['type' => 'templating','status' => true ,'title' => $hook_name];
-        $nodes = \Drupal::entityTypeManager()->getStorage('node')
-        ->loadByProperties($array);
-        if ( empty($nodes) && strpos($hook_name, 'block-content--') === 0) {
-            $hook_name = str_replace('block-content--','block--', $hook_name);
-            $array = ['type' => 'templating','status' => true ,'title' => $hook_name];
-            $nodes = \Drupal::entityTypeManager()->getStorage('node')
             ->loadByProperties($array);
-        }
-        return  end($nodes);
+        return end($nodes);
     }
-    public function is_template_exist($config_name){
-        $array = ['type' => 'templating','status' => true ,'title' => $config_name];
+    public function getTemplatingByTitle($hook_name)
+    {
+        $array = ['type' => 'templating', 'status' => true, 'title' => $hook_name];
         $nodes = \Drupal::entityTypeManager()->getStorage('node')
-        ->loadByProperties($array);
-        if ( empty($nodes) && strpos($config_name, 'block--') === 0) {
-            $hook_name = str_replace('block--','block-content--', $hook_name);
-            $array = ['type' => 'templating','status' => true ,'title' => $hook_name];
-            $nodes = \Drupal::entityTypeManager()->getStorage('node')
             ->loadByProperties($array);
+        if (empty($nodes) && strpos($hook_name, 'block-content--') === 0) {
+            $hook_name = str_replace('block-content--', 'block--', $hook_name);
+            $array = ['type' => 'templating', 'status' => true, 'title' => $hook_name];
+            $nodes = \Drupal::entityTypeManager()->getStorage('node')
+                ->loadByProperties($array);
         }
-        if(!empty($nodes)){return true;}else{return false;}
+        return end($nodes);
     }
-    public function inputChecker($input){
+    public function is_template_exist($config_name)
+    {
+        $array = ['type' => 'templating', 'status' => true, 'title' => $config_name];
+        $nodes = \Drupal::entityTypeManager()->getStorage('node')
+            ->loadByProperties($array);
+        if (empty($nodes) && strpos($config_name, 'block--') === 0) {
+            $hook_name = str_replace('block--', 'block-content--', $hook_name);
+            $array = ['type' => 'templating', 'status' => true, 'title' => $hook_name];
+            $nodes = \Drupal::entityTypeManager()->getStorage('node')
+                ->loadByProperties($array);
+        }
+        if (!empty($nodes)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function inputChecker($input)
+    {
         if ($input instanceof NodeInterface) {
-            return 'node' ;
+            return 'node';
         }
-        if($input instanceof BlockContentInterface){
+        if ($input instanceof BlockContentInterface) {
             return 'block_content';
         }
-        return false ;
+        return false;
 
     }
-    public function is_field_ready($entity, $field) {
+    public function is_field_ready($entity, $field)
+    {
         $bool = FALSE;
         if (is_object($entity) && $entity->hasField($field)) {
-          $field_value = $entity->get($field)->getValue();
-          if (!empty($field_value)) {
-            $bool = TRUE;
-          }
+            $field_value = $entity->get($field)->getValue();
+            if (!empty($field_value)) {
+                $bool = TRUE;
+            }
         }
         return $bool;
-      }
-  public function getNodeByAlias($alias)
-  {
-    /** @var \Drupal\Core\Path\AliasManager $alias_manager */
-    $alias_manager = \Drupal::service('path_alias.manager');
-    $parts = explode('+', $alias);
-    $alias = implode('/', $parts);
-
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-    try {
-      $path = $alias_manager->getPathByAlias($alias);
-      $route = Url::fromUserInput($path);
-      if ($route && $route->isRouted()) {
-        $params = $route->getRouteParameters();
-        if (!empty($params['node'])) {
-          return $node_storage->load($params['node']);
-        }
-      }
-    } catch (\Exception $e) {
-      return null;
     }
-    return null;
-  }
+    public function getNodeByAlias($alias)
+    {
+        /** @var \Drupal\Core\Path\AliasManager $alias_manager */
+        $alias_manager = \Drupal::service('path_alias.manager');
+        $parts = explode('+', $alias);
+        $alias = implode('/', $parts);
+
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        try {
+            $path = $alias_manager->getPathByAlias($alias);
+            $route = Url::fromUserInput($path);
+            if ($route && $route->isRouted()) {
+                $params = $route->getRouteParameters();
+                if (!empty($params['node'])) {
+                    return $node_storage->load($params['node']);
+                }
+            }
+        } catch (\Exception $e) {
+            return null;
+        }
+        return null;
+    }
 
 
 }
