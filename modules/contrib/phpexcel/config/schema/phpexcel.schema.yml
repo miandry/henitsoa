@@ -1,0 +1,24 @@
+# Schema for the configuration files of the phpexcel module.
+
+phpexcel.settings:
+  type: config_object
+  label: 'PHPExcel settings'
+  mapping:
+    cache_mechanism:
+      type: string
+      label: 'Cache mechanism'
+    phptemp_limit:
+      type: integer
+      label: 'Cache mechanism'
+    apc_cachetime:
+      type: integer
+      label: 'apc cachetime'
+    memcache_host:
+      type: string
+      label: 'memcache host'
+    memcache_port:
+      type: integer
+      label: 'memcache port'
+    memcache_cachetime:
+      type: integer
+      label: 'memcache cachetime'

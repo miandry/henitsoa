@@ -1,0 +1,23 @@
+uuid: 9807387a-8352-40c9-b1e5-04882b513887
+langcode: fr
+status: true
+dependencies:
+  config:
+    - filter.format.html_code
+  module:
+    - ace_editor
+format: html_code
+editor: ace_editor
+settings:
+  fieldset:
+    theme: cobalt
+    syntax: html
+    height: 700px
+    width: 100%
+    font_size: 10pt
+    line_numbers: 1
+    print_margins: 1
+    show_invisibles: 0
+    use_wrap_mode: 1
+    auto_complete: 1
+image_upload: {  }

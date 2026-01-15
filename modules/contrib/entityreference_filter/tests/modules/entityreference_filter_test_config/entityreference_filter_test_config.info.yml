@@ -1,0 +1,14 @@
+name: 'Test config'
+type: module
+description: 'Provides default configs for testing.'
+package: Testing
+core: 8.x
+core_version_requirement: ^8 || ^9
+php: 7.1
+dependencies:
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2021-05-08
+version: '8.x-1.4'
+project: 'entityreference_filter'
+datestamp: 1620486713

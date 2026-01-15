@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Theme override for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ */
+#}
+
+{% set output = render_template_form(var_template,children) %}
+{% if output %}
+     <form{{ attributes }}>
+      {{  render_template_form(var_template,children)}}
+   </form>
+{% else %}
+    {{spacer_top(content)|raw}}
+          <form{{ attributes }}>
+              {% block templating_content %}
+                  {{ children }}
+              {% endblock %}
+          </form>
+    {{spacer_bottom(content)|raw}}
+{% endif %}
+
+

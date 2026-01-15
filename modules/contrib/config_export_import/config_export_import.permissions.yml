@@ -1,0 +1,15 @@
+allowed export config:
+  title: 'Allowed export config'
+  description: 'Allowed export config'
+allowed delete config file:
+  title: 'Allowed delete config file'
+  description: 'allowed delete  config file'
+allowed import config:
+  title: 'Allowed import config'
+  description: 'Allowed import config'
+allowed delete config:
+  title: 'Allowed delete config in database'
+  description: 'allowed delete  config database'
+allowed access setting config:
+  title: 'Allowed access setting config'
+  description: 'Allowed access setting config'

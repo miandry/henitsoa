@@ -1,0 +1,53 @@
+name: 'Config Export Import'
+type: module
+description: 'Config Export Import search by key'
+# core: 8.x
+core_version_requirement: ^8 || ^9
+package: 'Developement'
+
+# Information added by Drupal.org packaging script on 2018-06-14
+# version: '8.x-1.2'
+# core: '8.x'
+# project: 'drupal_helper'
+# datestamp: 1528970630
+
+# Information added by Drupal.org packaging script on 2018-08-22
+# version: '8.x-1.5'
+core: '8.x'
+# project: 'developement'
+# datestamp: 1534932484
+
+# Information added by Drupal.org packaging script on 2021-03-29
+# version: '8.x-1.1+1-dev'
+# project: 'config_export_import'
+# datestamp: 1616986858
+
+# Information added by Drupal.org packaging script on 2021-04-01
+# version: '8.x-1.2'
+# project: 'config_export_import'
+# datestamp: 1617265184
+
+# Information added by Drupal.org packaging script on 2021-06-24
+# version: '8.x-1.5'
+# project: 'config_export_import'
+# datestamp: 1624539769
+
+# Information added by Drupal.org packaging script on 2021-07-05
+# version: '8.x-1.6'
+# project: 'config_export_import'
+# datestamp: 1625452122
+
+# Information added by Drupal.org packaging script on 2021-09-13
+# version: '8.x-1.12'
+# project: 'config_export_import'
+# datestamp: 1631513265
+
+# Information added by Drupal.org packaging script on 2021-09-16
+# version: '8.x-1.14'
+# project: 'config_export_import'
+# datestamp: 1631765932
+
+# Information added by Drupal.org packaging script on 2022-10-14
+version: '8.x-1.19'
+project: 'config_export_import'
+datestamp: 1665736565

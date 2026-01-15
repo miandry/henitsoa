@@ -1,0 +1,9 @@
+parameters:
+  session_based_temp_store.cookie_name: 'session_store_id'
+
+services:
+  session_based_temp_store:
+      class: Drupal\session_based_temp_store\SessionBasedTempStoreFactory
+      arguments: ['@keyvalue.expirable', '@lock', '@request_stack', '@session_configuration', '%tempstore.expire%', '%session_based_temp_store.cookie_name%']
+      tags:
+        - { name: backend_overridable }

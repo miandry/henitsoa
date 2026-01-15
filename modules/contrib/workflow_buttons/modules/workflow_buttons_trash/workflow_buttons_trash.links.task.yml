@@ -1,0 +1,5 @@
+workflow_buttons_trash.trashed_content:
+  title: "Trash"
+  route_name: workflow_buttons_trash.admin_trashed_content
+  parent_id: system.admin_content
+  weight: 90

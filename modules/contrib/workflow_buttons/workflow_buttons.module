@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * The workflow_buttons module file.
+ */
+
+use Drupal\content_moderation\Plugin\Field\ModerationStateFieldItemList;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeForm;
+
+/**
+ * Implements hook_help().
+ */
+function workflow_buttons_help($route_name, RouteMatchInterface $route_match) {
+  // We'll repeat the same information on the main help and configuration pages.
+  $help = t("First, configure a workflow.  Second, configure the workflow moderation widget.");
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function workflow_buttons_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (!($form_state->getFormObject() instanceof NodeForm)) {
+    return;
+  }
+  $form['#entity_builders']['update_status'] = '\Drupal\workflow_buttons\Plugin\Field\FieldWidget\WorkflowButtonsWidget::updateStatus';
+  // Only display the workflow buttons when rendering the pseudofield.
+  if (array_key_exists('workflow_buttons', $form_state->getStorage())) {
+    $routes_list = [
+      'entity.node.canonical',
+      'entity.node.revision',
+      'entity.node.latest_version',
+    ];
+    if (in_array(\Drupal::routeMatch()->getRouteName(), $routes_list)) {
+      $form_elements_keep_list = [
+        'actions',
+        'moderation_state',
+        'form_token',
+        'form_id',
+      ];
+      foreach ($form as $key => $value) {
+        if (!str_starts_with($key, '#') && !in_array($key, $form_elements_keep_list)) {
+          unset($form[$key]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function workflow_buttons_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if (isset($fields['moderation_state']) && $fields['moderation_state']->getClass() === ModerationStateFieldItemList::class) {
+    $fields['moderation_state']->setDisplayOptions('form', [
+      'type' => 'workflow_buttons',
+      'weight' => 5,
+      'settings' => [],
+    ]);
+  }
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function workflow_buttons_entity_extra_field_info() {
+  $extra = [];
+  $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+  $bundle_info = $entity_type_bundle_info->getBundleInfo('node');
+  foreach (NodeType::loadMultiple() as $bundle) {
+    if (array_key_exists($bundle->id(), $bundle_info)) {
+      if (array_key_exists('workflow', $bundle_info[$bundle->id()])) {
+        $extra['node'][$bundle->id()]['display']['workflow_buttons'] = [
+          'label' => t('Workflow buttons'),
+          'description' => t('Workflow buttons'),
+          'weight' => 0,
+          'visible' => TRUE,
+        ];
+      }
+    }
+  }
+  return $extra;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function workflow_buttons_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('workflow_buttons')) {
+    $form_state_additions = [
+      'workflow_buttons' => TRUE,
+    ];
+    $form = \Drupal::service('entity.form_builder')->getForm($entity, 'default', $form_state_additions);
+    $build['workflow_buttons'] = $form;
+  }
+}
+
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Expose the current revision state and latest revision state to templates.
+ *
+ * This should probably be moved to a different helper module, or maybe core.
+ *
+ * Taken initially from Kay Beissert's solution here:
+ * https://www.drupal.org/forum/support/theme-development/2018-04-20/how-can-i-get-the-content_moderation_state-of-last#comment-12603894
+ */
+function workflow_buttons_preprocess_node(&$variables) {
+  // Note: Access key booleans in Twig node templates like this:
+  // node.isDefaultRevision()
+  // node.isLatestRevision()
+  $variables['latest_revision_state'] = '';
+  $variables['current_revision_state'] = '';
+
+  $node = $variables['node'];
+
+  // $was_default_revision = $node->wasDefaultRevision();
+  $variables['current_revision_state'] = _workflow_buttons_safe_get_moderation_state($node);
+
+  // If we are viewing the default revision and *not* the latest revision, then
+  // we will want to load the latest revision.
+  if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
+    // $loaded_revision_id = $node->getLoadedRevisionId();
+    // Above appears to always match below.
+    $current_revision_id = $node->getRevisionId();
+
+    // Get all of the revision ids.
+    /** @var \Drupal\node\NodeStorage $node_storage */
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $revision_ids = $node_storage->revisionIds($variables['node']);
+
+    // Check if the last item in the revisions is the loaded one.
+    $last_revision_id = end($revision_ids);
+
+    if ($current_revision_id != $last_revision_id) {
+      // Load the latest revision, so we can reference it's state.
+      $last_revision = $node_storage->loadRevision($last_revision_id);
+      // Get the revision's moderation state.
+      $variables['latest_revision_state'] = _workflow_buttons_safe_get_moderation_state($last_revision);
+    }
+  }
+}
+
+/**
+ * Get the moderation state as a string.
+ */
+function _workflow_buttons_safe_get_moderation_state($node) {
+  if ($node->hasField('moderation_state')) {
+    return $node->get('moderation_state')->getString();
+  }
+}

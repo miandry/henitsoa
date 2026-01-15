@@ -1,0 +1,11 @@
+name: Date Filter
+type: module
+description: 'Improves the core datetime Views date filter.'
+core_version_requirement: ^9 || ^10 || ^11
+dependencies:
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2024-11-20
+version: '1.0.2'
+project: 'date_filter'
+datestamp: 1732103277

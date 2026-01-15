@@ -1,0 +1,13 @@
+uuid: 71b1204c-7663-41c7-bc6e-d58672833834
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+name: Templating
+type: templating
+description: 'Hook html file via Database for example : node--bootstrap5-article-full.html.twig'
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: true

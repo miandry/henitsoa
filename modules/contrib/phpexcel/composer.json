@@ -1,0 +1,15 @@
+{
+  "name": "drupal/phpexcel",
+  "description": "Provides a simple API for using the PhpSpreadsheet library",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://www.drupal.org/project/phpexcel",
+  "support": {
+      "issues": "https://www.drupal.org/project/issues/phpexcel",
+      "source": "https://git.drupalcode.org/project/phpexcel"
+  },
+  "minimum-stability": "dev",
+  "require": {
+      "phpoffice/phpspreadsheet": "^1"
+  }
+}

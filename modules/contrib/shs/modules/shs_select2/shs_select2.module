@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Integrates Select2 with Simple hierarchical select.
+ */
+
+/**
+ * Implements hook_shs_class_definitions_alter().
+ */
+function shs_select2_shs_class_definitions_alter(&$definitions, $context) {
+  // Use custom classes for widget.
+  $definitions['views']['widget'] = 'Drupal.shs_select2.Select2WidgetView';
+}

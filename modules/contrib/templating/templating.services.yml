@@ -1,0 +1,8 @@
+services:
+  templating.manager:
+    class: Drupal\templating\EntityInlineTemplate
+  templating.twig.extension:
+    class: Drupal\templating\TwigExtension\DefaultTwigExtension
+    arguments: []
+    tags:
+      - { name: twig.extension }

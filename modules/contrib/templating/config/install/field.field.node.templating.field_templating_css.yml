@@ -1,0 +1,26 @@
+uuid: 83a6aa39-e6ce-41b6-80d7-0395acbb108a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_templating_css
+    - node.type.templating
+  module:
+    - allowed_formats
+    - text
+third_party_settings:
+  allowed_formats:
+    allowed_formats:
+      - css_code
+id: node.templating.field_templating_css
+field_name: field_templating_css
+entity_type: node
+bundle: templating
+label: Css
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

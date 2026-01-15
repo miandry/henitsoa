@@ -1,0 +1,5 @@
+delete-button:
+  version: 1.x
+  css:
+    theme:
+      css/delete-button.css: {}

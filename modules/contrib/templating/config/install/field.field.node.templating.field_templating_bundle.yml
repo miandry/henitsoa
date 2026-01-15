@@ -1,0 +1,19 @@
+uuid: 6526db0c-321e-4b4d-98fe-ca8dff2d9e02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_templating_bundle
+    - node.type.templating
+id: node.templating.field_templating_bundle
+field_name: field_templating_bundle
+entity_type: node
+bundle: templating
+label: Bundle
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

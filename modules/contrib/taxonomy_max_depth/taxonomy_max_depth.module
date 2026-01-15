@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * The module file.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for taxonomy_overview_terms.
+ */
+function taxonomy_max_depth_form_taxonomy_overview_terms_alter(
+  array &$form,
+  FormStateInterface $form_state
+) {
+  /** @var \Drupal\taxonomy_max_depth\Form\FormAltererInterface $alterer */
+  $alterer = \Drupal::service('taxonomy_max_depth.term_overview_form_alterer');
+  $alterer->alter($form, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for taxonomy_vocabulary_form.
+ */
+function taxonomy_max_depth_form_taxonomy_vocabulary_form_alter(
+  array &$form,
+  FormStateInterface $form_state
+) {
+  /** @var \Drupal\taxonomy_max_depth\Form\FormAltererInterface $alterer */
+  $alterer = \Drupal::service('taxonomy_max_depth.vocabulary_form_alterer');
+  $alterer->alter($form, $form_state);
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for taxonomy_term_form.
+ */
+function taxonomy_max_depth_form_taxonomy_term_form_alter(
+  array &$form,
+  FormStateInterface $form_state
+) {
+  /** @var \Drupal\taxonomy_max_depth\Form\FormAltererInterface $alterer */
+  $alterer = \Drupal::service('taxonomy_max_depth.term_form_alterer');
+  $alterer->alter($form, $form_state);
+}

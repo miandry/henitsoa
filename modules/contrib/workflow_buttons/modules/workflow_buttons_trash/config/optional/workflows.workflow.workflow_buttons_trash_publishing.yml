@@ -1,0 +1,105 @@
+uuid: 5a86886e-9b82-46c2-a8ff-08d6f594a14f
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.announcement
+    - node.type.event
+    - node.type.group_comment
+    - node.type.page
+    - node.type.resource
+  module:
+    - content_moderation
+_core:
+  default_config_hash: C0jZewM2mDrvz1X6CgI-Z0c5suz-odCZu1SKLKhotjo
+id: workflow_buttons_trash_publishing
+label: "Publishing (with draft and soft delete)"
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Draft
+      published: false
+      default_revision: false
+      weight: -2
+    published:
+      label: Published
+      published: true
+      default_revision: true
+      weight: 0
+    trash:
+      published: false
+      default_revision: true
+      label: Trash
+      weight: 1
+    unpublished:
+      published: false
+      default_revision: true
+      label: Unpublished
+      weight: 2
+  transitions:
+    create_new_draft:
+      label: Save
+      to: draft
+      weight: -5
+      from:
+        - draft
+    delete:
+      label: Delete
+      from:
+        - draft
+        - published
+        - unpublished
+      to: trash
+      weight: 1
+    publish:
+      label: Publish
+      to: published
+      weight: -1
+      from:
+        - draft
+        - unpublished
+    restore_draft:
+      label: "Restore to Draft"
+      from:
+        - trash
+      to: draft
+      weight: 2
+    restore_publish:
+      label: "Restore and Publish"
+      from:
+        - trash
+      to: published
+      weight: 3
+    save_draft_leave_current_published:
+      label: "Create draft (leave current version published)"
+      from:
+        - published
+      to: draft
+      weight: -2
+    save_unpublished:
+      label: Save
+      from:
+        - unpublished
+      to: unpublished
+      weight: -4
+    unpublish:
+      label: Unpublish
+      from:
+        - published
+      to: unpublished
+      weight: 0
+    update:
+      label: Update
+      from:
+        - published
+      to: published
+      weight: -3
+  default_moderation_state: draft
+  entity_types:
+    node:
+      - announcement
+      - event
+      - group_comment
+      - page
+      - resource

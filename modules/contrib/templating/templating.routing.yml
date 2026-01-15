@@ -1,0 +1,26 @@
+templating.settings:
+   path: '/admin/config/template/settings'
+   defaults:
+     _form: '\Drupal\templating\Form\ConfigTemplateSetting'
+     _title: 'Template Settings'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+
+templating.create:
+  path: '/admin/template/create'
+  defaults:
+    _form: '\Drupal\templating\Form\ConfigTemplateCreate'
+    _title: 'Create  Template'
+  requirements:
+    _permission: 'allowed create template'
+templating.diff:
+  path: '/admin/templating/diff'
+  defaults:
+    _form: '\Drupal\templating\Form\ConfigDiffForm'
+    _title: 'Templating Diff'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

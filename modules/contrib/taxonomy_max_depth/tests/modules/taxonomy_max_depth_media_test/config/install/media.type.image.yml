@@ -1,0 +1,13 @@
+uuid: 420f3508-682e-430d-ab40-20bdc80cd9b6
+langcode: en
+status: true
+dependencies: {  }
+id: image
+label: image
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image
+field_map: {  }

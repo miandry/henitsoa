@@ -1,0 +1,9 @@
+{% set output = render_template(content) %}
+{% if output %}
+ {{  render_template(content)}}
+{% else %}
+  <div{{content_attributes.addClass('comment__content')}}>
+    {{spacer_top(content)|raw}}{% block templating_content %}{{content}}{% endblock %}{{spacer_bottom(content)|raw}}
+  </div>
+{% endif %}
+

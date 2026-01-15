@@ -1,0 +1,11 @@
+name: Stripe
+type: module
+description: Stripe
+core_version_requirement: ^8.8 || ^9
+package: Stripe
+configure: stripe.settings
+
+# Information added by Drupal.org packaging script on 2021-04-16
+version: '2.0.0-beta2'
+project: 'stripe'
+datestamp: 1618600049

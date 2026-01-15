@@ -1,0 +1,18 @@
+config_export_import.export:
+  route_name: config_export_import.manual_export
+  base_route: config_export_import.manual_export
+  title: 'Config Manual Export'
+
+config_export_import.import:
+  route_name: config_export_import.manual_import
+  base_route: config_export_import.manual_export
+  title: 'Config Manual Import'
+
+config_export_import.settings:
+  route_name: config_export_import.config_manual_setting
+  base_route: config_export_import.manual_export
+  title: 'Config Manual Setting'
+config_export_import.upload:
+  route_name: config_export_import.config_manual_upload
+  base_route: config_export_import.manual_export
+  title: 'Upload Config Manual'  

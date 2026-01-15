@@ -1,0 +1,65 @@
+config_export_import.manual_import_diff:
+   path: '/admin/config/development/configuration/manual-import-diff'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigDiffForm'
+     _title: 'Config Diff'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+
+config_export_import.manual_export:
+   path: '/admin/config/development/configuration/manual-export'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigExportForm'
+     _title: 'Config Export List'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+config_export_import.manual_import_batch:
+   path: '/admin/config/development/configuration/manual-import-batch'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigImportBatchForm'
+     _title: 'Config Import Batch'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+
+config_export_import.manual_import:
+   path: '/admin/config/development/configuration/manual-import'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigImportForm'
+     _title: 'Config Import List'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+config_export_import.config_manual_setting:
+   path: '/admin/config/development/configuration/config-manual-setting'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigManualSetting'
+     _title: 'Config Manual Settings'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
+config_export_import.config_manual_upload:
+   path: '/admin/config/development/configuration/manual-upload'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\UploadConfigForm'
+     _title: 'Upload Config Manual'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE     
+config_export_import.config_manual_editor:
+   path: '/admin/config/development/configuration/manual-editor'
+   defaults:
+     _form: '\Drupal\config_export_import\Form\ConfigEditorFile'
+     _title: 'Editor Config Manual'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE       

@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Workflow buttons module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function workflow_buttons_install() {
+  \Drupal::messenger()->addStatus(t('Workflow Buttons module requires that for each content type for which you wish to use buttons, go to <strong>Manage form display</strong> and change the <strong>Moderation state</strong> field to use the "Workflow buttons" widget.'));
+}

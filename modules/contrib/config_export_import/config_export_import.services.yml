@@ -1,0 +1,3 @@
+services:
+  config_export_import.manager:
+    class: Drupal\config_export_import\ConfigExportImportManager

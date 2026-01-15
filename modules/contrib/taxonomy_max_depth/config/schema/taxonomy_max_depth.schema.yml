@@ -1,0 +1,9 @@
+# Schema for the configuration files.
+
+taxonomy.vocabulary.*.third_party.taxonomy_max_depth:
+  type: mapping
+  label: 'Taxonomy max depth settings'
+  mapping:
+    max_depth:
+      type: integer
+      label: 'Max ancestor depth'

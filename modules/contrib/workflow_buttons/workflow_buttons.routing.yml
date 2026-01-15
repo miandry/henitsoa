@@ -1,0 +1,7 @@
+workflow_buttons.settings:
+  path: "/admin/config/workflow/workflow-buttons"
+  defaults:
+    _form: '\Drupal\workflow_buttons\Form\SettingsForm'
+    _title: Workflow buttons settings
+  requirements:
+    _permission: "administer site configuration"

@@ -1,0 +1,7 @@
+templating.add_site:
+  route_name: 'node.add'
+  route_parameters:
+    node_type: 'templating'
+  title: 'Add Templating'
+  appears_on:
+    - view.templating.page_1

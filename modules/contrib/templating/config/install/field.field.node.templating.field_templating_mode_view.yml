@@ -1,0 +1,19 @@
+uuid: e3774f69-32cd-4327-aeb9-88a39ef31229
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_templating_mode_view
+    - node.type.templating
+id: node.templating.field_templating_mode_view
+field_name: field_templating_mode_view
+entity_type: node
+bundle: templating
+label: 'Mode view'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

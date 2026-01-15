@@ -1,0 +1,417 @@
+<?php
+
+/**
+ * @file
+ * Contains templating.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Url;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\NodeInterface;
+/**
+ * Implements hook_help().
+ */
+function templating_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the templating module.
+    case 'help.page.templating':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Template Manager') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements MODULE_preprocess().
+ *
+ * @see RenderTest::testDrupalRenderThemePreprocessAttached()
+ */
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function templating_theme_suggestions_node_alter(array &$suggestions, array $variables, $hook) {
+    if (isset($variables['elements']['#entity_type'])) {
+        $entity_name = $variables['elements']['#entity_type'];
+        $entity = $variables['elements']['#'.$entity_name] ;
+        if(is_object($entity)){
+            $view_mode = $variables['elements']['#view_mode'] ;
+            $bundle = $entity->bundle();
+            $id= $entity->id();
+            $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+            $theme = $activeThemeName->getName();
+            $suggestion_1 = $entity_name."__".$theme."_".$bundle."_".$view_mode ;
+            $suggestion_2 = $entity_name."__".$theme."_".$bundle."_".$id."_".$view_mode ;
+            $suggestion_3 = $entity_name."__".$bundle."__".$view_mode ;
+            $suggestions[] = $suggestion_3;
+            $suggestions[] = $suggestion_1;
+            $suggestions[] = $suggestion_2;
+
+        }
+        }
+
+
+}
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function templating_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables, $hook) {
+
+    if (isset($variables['elements']['#entity_type'])) {
+        $entity_name = $variables['elements']['#entity_type'];
+        $entity = $variables['elements']['#'.$entity_name] ;
+        if(is_object($entity)){
+            $view_mode = $variables['elements']['#view_mode'] ;
+            $bundle = $entity->bundle();
+            $id= $entity->id();
+            $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+            $theme = $activeThemeName->getName();
+            $suggestion_1 = $entity_name."__".$theme."_".$bundle."_".$view_mode ;
+            $suggestion_2 = $entity_name."__".$theme."_".$bundle."_".$id."_".$view_mode ;
+            $suggestion_3 = $entity_name."__".$bundle."__".$view_mode ;
+            $suggestions[] = $suggestion_3;
+            $suggestions[] = $suggestion_1;
+            $suggestions[] = $suggestion_2;
+        }
+        }
+}
+function templating_theme_suggestions_block_alter(&$suggestions, $variables) {
+    //Override Block Type
+    $content = $variables['elements']['content'];
+    $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+    $theme = $activeThemeName->getName();
+    if (isset($content['#block_content']) && $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
+        $view_mode = $variables['elements']['content']['#view_mode'];
+        $id = $content['#block_content']->id();
+        $suggestions[] = 'block__'.$content['#block_content']->bundle()."__".$view_mode;
+        $suggestions[] = 'block__'.$theme.'_'.$content['#block_content']->bundle()."_".$view_mode;
+        $suggestions[] = 'block__'.$theme.'_'.$content['#block_content']->bundle()."_".$id."_".$view_mode;    
+    }
+
+    if (!isset($content['#block_content'])){
+        $plugin_id = trim($variables['elements']['#plugin_id']);
+        $base_plugin_id = trim($variables['elements']['#base_plugin_id']);
+        $suggestions[] = 'block__'.$theme.'_'.$plugin_id;
+        $suggestions[] = 'block__'.$theme.'_'.$base_plugin_id;
+    }
+
+}
+/**
+ * Implements hook_views_pre_render().
+ */
+ function templating_preprocess_views_view(&$variables) {
+    $service = \Drupal::service('templating.manager');
+    $output = $service->getTemplateView($variables);
+    if(!empty($output)){
+            foreach( $output as $key=> $value){
+                     $element = [
+                          '#type' => 'inline_template',
+                          '#template' => $value,
+                           '#context' => [
+                             $key => $variables[$key]
+                          ]
+                     ];
+                     $variables['template_'.$key] = $element ;
+       }
+    }
+ }
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function templating_theme_registry_alter(&$theme_registry) {
+     $service = \Drupal::service('templating.manager');
+    if($service->is_allowed()){
+   //   $theme_registry['block']['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+    //  $theme_registry['html']['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+    //  $theme_registry['node']['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+    //  $theme_registry['views_view']['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+    //  $theme_registry['comment']['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+
+    foreach (   $theme_registry as $key => $item){
+       // kint($item['template']);
+  
+        $file = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc/'.$item['template'].'.html.twig' ;
+        if(file_exists($file)){
+          $theme_registry[$key]['path'] = \Drupal::service('extension.list.module')->getPath('templating') .'/templates/misc' ;
+        }
+      } 
+
+    }
+}
+
+function templating_preprocess_html(&$variables) {
+     $service = \Drupal::service('templating.manager');
+     $asset = $service->getAllAsset();
+
+     $route = \Drupal::routeMatch()->getRouteObject();
+     $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+     if(!$is_admin){
+        $variables['html_page'] = $service->htmlPage();
+        $config = \Drupal::config('portotheme_style_switcher.theme_style');
+        $content = $config->get('css');
+        $css_theme = "";
+        if($config && $config->get('css')){
+           $css_theme = $config->get('css').$asset["css"] ;
+        }
+        $asset_css_file = $service->buildCSSTemplateTheme();
+        $variables['css_template'] =  $css_theme.' '.$asset["css"].' '.$asset_css_file ;
+        $variables['js_template'] = $asset["js"] ;
+        $variables['library_template'] = $service->generateLibrary();
+        $node = \Drupal::request()->attributes->get('node');
+        if ($node && $node->bundle() == 'html_page' && $is_ready) {
+          $variables['#cache']['max-age'] = 0;
+        }
+     }
+  
+
+
+
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function templating_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if($form_id == 'node_templating_form'){
+        $path='/admin/template/create?destination=/admin/templating';
+        $response = new RedirectResponse($path, 302);
+        $response->send();
+        return;
+  }
+   if($form_id == 'node_templating_edit_form'){
+       $form['field_templating_mode_view']['widget'][0]['value']['#attributes'] = ['readonly' => 'readonly'];
+       $form['field_templating_theme']['widget'][0]['value']['#attributes'] = ['readonly' => 'readonly'];
+       $form['field_templating_entity_type']['widget'][0]['value']['#attributes'] = ['readonly' => 'readonly'];
+       $form['field_templating_bundle']['widget'][0]['value']['#attributes'] = ['readonly' => 'readonly'];
+       $form['title']['widget'][0]['value']['#attributes'] = ['readonly' => 'readonly'];
+       $template = $form_state->getFormObject()->getEntity();
+     $service = \Drupal::service('templating.manager');
+     $file = $service->getFilepathTemplating( $template);
+
+     $entity_name = $template->field_templating_entity_type->value ;
+     if(   $entity_name =='block_content' ||  $entity_name =='block' ||  $entity_name =='node' ||    $entity_name == 'user' || $entity_name == 'taxonomy_term'){
+      if (\Drupal::currentUser()->hasPermission('allowed write template file')) {
+        if (!file_exists($file)) {
+          $form['actions']['alt_button'] = array(
+            '#type' => 'submit',
+            '#value' => t('Export'),
+            '#submit' => array('_templating_node_write_form_submit'),
+          );
+        }else{
+          $form['actions']['alt_button'] = array(
+            '#type' => 'submit',
+            '#value' => t('Update file'),
+            '#submit' => array('_templating_node_write_form_submit'),
+          );
+            $form['actions']['diff_button'] = array(
+              '#type' => 'submit',
+              '#value' => t('Check diff'),
+              '#submit' => array('_templating_node_diff_form_submit'),
+            );
+
+        }
+      }
+     }
+
+
+   }
+}
+function _templating_node_diff_form_submit($form,FormStateInterface &$form_state) {
+  $template = $form_state->getFormObject()->getEntity();
+  $nid = $template->id();
+  $path = '/admin/templating/diff?nid='. $nid.'&destination=/node' . '/' . $nid . '/edit';
+  $response = new RedirectResponse($path, 302);
+  $response->send();
+}
+
+function _templating_node_write_form_submit ($form,FormStateInterface &$form_state) {
+  $service = \Drupal::service('templating.manager');
+  $template = $form_state->getFormObject()->getEntity();
+  $service->exportTemplating($template);
+  // $batch = [
+  //   'title' => t('Export Template From File...'),
+  //   'operations' => [],
+  //   'init_message' => t('Starting ..'),
+  //   'progress_message' => t('Processd @current out of @total.'),
+  //   'error_message' => t('An error occurred during processing.'),
+  //   'finished' => 'Drupal\templating\EntityInlineTemplate::importFinishedCallback',
+  // ];
+ // $batch['operations'][] = [$service->exportTemplating($template), []];
+  //batch_set($batch);
+}
+
+ /**
+ * Implements hook_menu_local_tasks_alter().
+ * Add tab with custom title and link only to pages of a selected content type
+ */
+function templating_menu_local_tasks_alter(&$data, $route_name) {
+
+  //do nothing if this ain't a display page
+  if($route_name !== 'entity.node.canonical') return;
+  $service = \Drupal::service('templating.manager');
+
+  //try to get the currently displayed node
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $template_node = $service->getTemplatingByEntity($node);
+  //check if this is a node of the types you want to handle
+  if($template_node) {
+      $nid = $template_node->nid->value;
+      $data['tabs'][0]['template_edit'] = [
+        '#theme' => 'menu_local_task',
+        '#link' => [
+          'title' => t('Edit Template'),
+          //create a url object. here from a route, but can be Url object.
+           'url' => Url::fromRoute('entity.node.edit_form', ['node' => $nid])
+        ],
+      ];
+  }
+
+}
+function _templating_theme_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+            $services = \Drupal::service('templating.manager');
+            $themes = $services->getThemeList();
+            $defaultThemeName = \Drupal::config('system.theme')->get('default');
+            $theme_options = [];
+            foreach ($themes as $theme) {
+                $theme_options[$theme] = $theme;
+            }
+            return $theme_options ;
+}
+function templating_node_update(NodeInterface $node) {
+  if ($node->getType() == 'templating') {
+    $id = $node->id();
+    // You should use the route instead of path.
+    $url = Url::fromRoute('entity.node.edit_form', ['node' => $id])->toString();
+    // Redirecting to edit.
+    $response = new RedirectResponse($url);
+    $response->send();
+  }
+}
+function templating_theme_suggestions_form_alter(&$suggestions, $vars, $hook) {
+  $service = \Drupal::service('templating.manager');
+  // Define the view mode.
+  if(isset($vars['element']['#entity_type'])){
+    $entity_type = $vars['element']['#entity_type'];
+    $bundle = $service->getTargetBundleForm($vars);
+    if( $entity_type && $bundle){
+      $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+      $theme = $activeThemeName->getName();
+      $suggestions[] = "form__".$entity_type."__".$bundle."__full";  
+      $suggestions[] = "form__".$entity_type."_". $theme . "_".$bundle."_full";      
+    }
+  }
+
+
+}
+/**
+ * Implements hook_theme_suggestions_user_alter().
+ *
+ *   An array of alternate, more specific names for template files or theme
+ *   functions.
+ */
+function templating_theme_suggestions_user_alter(&$suggestions, $vars, $hook) {
+
+  // Define the view mode.
+  $mode = $vars['elements']['#view_mode'];
+  $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+  $theme = $activeThemeName->getName();
+  $suggestions[] = 'user__'.$mode;
+  $suggestions[] = 'user__'.$theme.'_user_'.$mode;
+
+
+}
+//
+
+function templating_preprocess_block(&$variables){
+  $service = \Drupal::service('templating.manager');
+  if($service->is_allowed()){
+    $variables["var_template"] = $variables ;
+  }
+}
+function templating_preprocess_form(&$variables){
+  $service = \Drupal::service('templating.manager');
+  if($service->is_allowed()){
+    $variables["var_template"] = $variables ;
+  }
+}
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for form elements.
+ */
+
+function templating_preprocess_field(&$variables){
+  $service = \Drupal::service('templating.manager');
+  if($service->is_allowed()){
+    $variables["var_template"] = $variables ;
+  }
+}
+
+function templating_preprocess_user(&$variables) {
+  $service = \Drupal::service('templating.manager');
+  if($service->is_allowed()){
+    $variables["var_template"] = $variables ;
+    $variables['view_mode'] = isset($variables['elements']['#view_mode'])? $variables['elements']['#view_mode'] : 'full';
+  }
+
+}
+function templating_preprocess_node(&$variables){
+  $node = $variables['elements']["#node"];
+  $service = \Drupal::service('templating.manager');
+  if($service->is_allowed() && is_object($node)){
+      $variables["var_template"] = $variables ;
+  }
+    if($variables["view_mode"] == "full" && is_object($node) && $node->bundle() == "templating"){
+
+
+    $type = $node->field_templating_entity_type->value ;
+    $bundle = $node->field_templating_bundle->value ;
+    if($service->is_field_ready($node,'field_templating_mode_view')){
+      $view_mode = $node->field_templating_mode_view->value ;
+    }
+    $output = $node->field_templating_html->value ;
+    $entity = $service->getLastEntityContent( $bundle ,$type);
+    $view_mode = "full";
+
+    if(!$entity){
+      $output = "Please add new ".$type." ". $bundle ;
+      $render =false ;
+    }else{
+      $render = \Drupal::entityTypeManager()->getViewBuilder($type)->view($entity) ;
+    }
+   $variables['output'] =  [
+          '#type' => 'inline_template',
+          '#template' => $output,
+          '#context' => [
+              'content' => $render,
+              'entity' => $entity
+          ],
+      ];
+    $variables['#cache']['max-age'] = 0;
+  }
+}
+function templating_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    // Check if the current page is a node page.
+    if ($node instanceof \Drupal\node\NodeInterface) {
+      // Get the content type of the node.
+      $node_type = $node->getType();
+      if($node_type == 'page'){  
+        $activeThemeName = \Drupal::service('theme.manager')->getActiveTheme();
+        $theme = $activeThemeName->getName();
+        // Add a suggestion based on the content type.
+        $suggestions[] = 'page__node_' . $node_type;
+        $alias = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
+        if( $alias){
+          $suggestions[] = 'page__node_'.$theme.'_'.str_replace('/', '_', $alias);
+        }
+      }
+    }
+  }
+}
+

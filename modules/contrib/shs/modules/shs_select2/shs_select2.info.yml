@@ -1,0 +1,13 @@
+name: 'Simple hierarchical select: Select2'
+description: 'Integrates Select2 with Simple hierarchical select.'
+package: User interface
+type: module
+core_version_requirement: ^9.5 || ^10
+dependencies:
+  - select2:select2
+  - shs:shs
+
+# Information added by Drupal.org packaging script on 2024-04-04
+version: '3.0.0-alpha3'
+project: 'shs'
+datestamp: 1712249560

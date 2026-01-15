@@ -1,0 +1,29 @@
+services:
+  taxonomy_max_depth.term_overview_form_alterer:
+    class: Drupal\taxonomy_max_depth\Form\TermOverviewFormAlterer
+    arguments:
+      - '@taxonomy_max_depth.vocabulary_settings_reader'
+
+  taxonomy_max_depth.vocabulary_form_alterer:
+    class: Drupal\taxonomy_max_depth\Form\VocabularyFormAlterer
+    arguments:
+      - '@taxonomy_max_depth.vocabulary_settings_reader'
+      - '@taxonomy_max_depth.vocabulary_settings_writer'
+
+  taxonomy_max_depth.term_form_alterer:
+    class: Drupal\taxonomy_max_depth\Form\TermFormAlterer
+    arguments:
+      - '@taxonomy_max_depth.vocabulary_settings_reader'
+      - '@entity_type.manager'
+      - '@taxonomy_max_depth.term_tree_depth_helper'
+
+  taxonomy_max_depth.term_tree_depth_helper:
+    class: Drupal\taxonomy_max_depth\Taxonomy\TermTreeDepthHelper
+
+  taxonomy_max_depth.vocabulary_settings_reader:
+    class: Drupal\taxonomy_max_depth\Taxonomy\VocabularySettingsReader
+    arguments:
+      - '@entity_type.manager'
+
+  taxonomy_max_depth.vocabulary_settings_writer:
+    class: Drupal\taxonomy_max_depth\Taxonomy\VocabularySettingsWriter

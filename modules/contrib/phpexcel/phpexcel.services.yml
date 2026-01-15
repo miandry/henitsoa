@@ -1,0 +1,7 @@
+services:
+  logger.channel.phpexcel:
+    parent: logger.channel_base
+    arguments: ['phpexcel']
+  phpexcel:
+    class: Drupal\phpexcel\PHPExcel
+    arguments: ['@logger.channel.phpexcel', '@event_dispatcher', '@module_handler', '@config.factory', '@string_translation']

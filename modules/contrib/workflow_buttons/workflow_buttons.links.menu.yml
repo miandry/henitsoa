@@ -1,0 +1,6 @@
+workflow_buttons.settings:
+  title: "Workflow buttons settings"
+  route_name: workflow_buttons.settings
+  description: "Configure workflow buttons (display additional set at top of edit forms)."
+  parent: system.admin_config_workflow
+  weight: 10

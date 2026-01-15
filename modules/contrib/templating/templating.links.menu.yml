@@ -1,0 +1,12 @@
+templating.templating_menu:
+  title: 'Template Settings'
+  route_name: templating.settings
+  description: 'Templates settings'
+  parent: system.admin_config_system
+  weight: 99
+templating.templating_list:
+  title: 'Templates List'
+  route_name: view.templating.page_1
+  description: 'Templates List'
+  parent: system.admin_config_system
+  weight: 99  

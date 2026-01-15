@@ -1,0 +1,25 @@
+/**
+ * Finagle the pseudo :before added trashcan icon, itself hung on a span added
+ * with #prefix, inside our safe, send-to-Trash-state delete button.
+ *
+ * We can rationalize this after button element submit buttons get into core in
+ * https://www.drupal.org/project/drupal/issues/1671190 or otherwise, see
+ * https://agaric.gitlab.io/raw-notes/notes/2019-10-31-change-drupal-s-submit-action-buttons-to-simple-workflow-state-based-buttons-including-replacing-delete-link-with-delete-to-trash-state-button/
+ */
+.submit-trash.action-link::before {
+  margin: 0;
+  z-index: 100;
+}
+.submit-trash.action-link--icon-trash {
+  position: relative;
+  left: 1.5em;
+  padding-left: 0;
+  padding-right: 0;
+}
+.submit-trash.button {
+  padding-left: 3em;
+  background-color: unset;
+  color: unset; /* Frustratingly no amount of unsetting will get this to use the .action-link--danger red, even though unchecking the overriding colors in browser inspector does work. */
+  position: relative;
+  left: -1.5em;
+}

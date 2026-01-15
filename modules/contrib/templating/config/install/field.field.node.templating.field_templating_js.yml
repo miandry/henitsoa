@@ -1,0 +1,26 @@
+uuid: ded22455-1a5c-430b-a904-4c3bf9f1b644
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_templating_js
+    - node.type.templating
+  module:
+    - allowed_formats
+    - text
+third_party_settings:
+  allowed_formats:
+    allowed_formats:
+      - javascript_code
+id: node.templating.field_templating_js
+field_name: field_templating_js
+entity_type: node
+bundle: templating
+label: Javascript
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

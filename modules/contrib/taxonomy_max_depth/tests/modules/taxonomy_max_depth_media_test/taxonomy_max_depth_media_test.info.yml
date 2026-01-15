@@ -1,0 +1,13 @@
+name: 'Taxonomy Max Depth Media test'
+type: module
+description: 'Test module for Media and Taxonomy Max Depth combination.'
+package: Testing
+core_version_requirement: ^9 || ^10
+dependencies:
+  - drupal:media
+  - taxonomy_max_depth:taxonomy_max_depth
+
+# Information added by Drupal.org packaging script on 2023-02-05
+version: '2.0.0'
+project: 'taxonomy_max_depth'
+datestamp: 1675635662

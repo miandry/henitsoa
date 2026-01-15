@@ -1,0 +1,14 @@
+name: 'Time Range'
+type: module
+description: 'Provides the form widget to fill in time range.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Field types
+dependencies:
+  - drupal:datetime
+  - drupal:datetime_range
+
+# Information added by Drupal.org packaging script on 2020-06-07
+version: '9.0.0'
+project: 'time_range'
+datestamp: 1591500670

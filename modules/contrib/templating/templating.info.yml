@@ -1,0 +1,35 @@
+name: 'templating'
+type: module
+description: 'Template Manager'
+# core: 8.x
+package: 'Management'
+
+# Information added by Drupal.org packaging script on 2018-11-12
+# version: '8.x-1.x-dev'
+# core: '8.x'
+# project: 'templating'
+# datestamp: 1542005886
+dependencies:
+  - ace_editor
+  - field_group
+  - allowed_formats
+# Information added by Drupal.org packaging script on 2018-11-21
+# version: '8.x-1.6'
+core_version_requirement: ^8 || ^9
+# project: 'templating'
+# datestamp: 1542800883
+
+# Information added by Drupal.org packaging script on 2021-04-19
+# version: '8.x-3.0'
+# project: 'templating'
+# datestamp: 1618833490
+
+# Information added by Drupal.org packaging script on 2021-04-28
+# version: '8.x-3.1'
+# project: 'templating'
+# datestamp: 1619617870
+
+# Information added by Drupal.org packaging script on 2022-12-14
+version: '8.x-4.10'
+project: 'templating'
+datestamp: 1671039626

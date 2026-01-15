@@ -1,0 +1,22 @@
+uuid: f6e19c5e-6073-40de-b680-77552578f127
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.templating
+id: node.templating.status
+field_name: status
+entity_type: node
+bundle: templating
+label: Published
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

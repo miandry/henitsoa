@@ -1,0 +1,5 @@
+# Schema for configuration files of the SHS select2 module.
+
+field.widget.settings.options_shs_select2:
+  type: field.widget.settings.options_shs
+  label: 'Simple hierarchical select with select2 form display settings'

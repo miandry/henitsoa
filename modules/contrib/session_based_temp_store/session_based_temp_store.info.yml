@@ -1,0 +1,10 @@
+name: 'Session Based Temporary Storage'
+description: 'Provides a service to store and retrieve temporary data for a given owner through the session.'
+package: Development
+type: module
+core_version_requirement: ^8 || ^9 || ^10
+
+# Information added by Drupal.org packaging script on 2023-10-12
+version: '8.x-1.5'
+project: 'session_based_temp_store'
+datestamp: 1697103044

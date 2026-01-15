@@ -1,0 +1,10 @@
+name: Unique Field Ajax
+description: "The Unique Field module allows administrators to require that content supplied for specified fields is unique."
+core: 8.x
+core_version_requirement: ^8 || ^9
+type: module
+package: Other
+# Information added by Drupal.org packaging script on 2022-04-05
+version: '2.1.2'
+project: 'unique_field_ajax'
+datestamp: 1649164475

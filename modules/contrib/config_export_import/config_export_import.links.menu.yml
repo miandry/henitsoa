@@ -1,0 +1,14 @@
+config_export_import.config_import_form:
+  title: 'Config Manual Import'
+  route_name: config_export_import.manual_import
+  description: 'Config Manual Import by search key'
+  parent: system.admin_config_development
+  weight: 99
+
+config_export_import.config_export_form:
+  title: 'Config Manual Export'
+  route_name: config_export_import.manual_export
+  description: 'Config Manual Export by search key'
+  parent: system.admin_config_development
+  weight: 99
+

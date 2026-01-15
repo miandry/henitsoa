@@ -1,0 +1,11 @@
+uuid: 38cb40a8-8ac3-491b-b103-a33aa8f5bd60
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy_max_depth
+third_party_settings: {}
+name: test
+vid: media_ajax_test
+description: ''
+weight: 0

@@ -1,0 +1,18 @@
+allowed export template:
+  title: 'Allowed export template'
+  description: 'Allowed export template'
+allowed delete template:
+  title: 'Allowed delete template'
+  description: 'allowed delete  template'
+access manage template:
+  title: 'Allowed access manage template'
+  description: 'Allowed access manage template'
+allowed edit template:
+  title: 'Allowed edit template'
+  description: 'Allowed edit template'
+allowed create template:
+  title: 'Allowed create template'
+  description: 'Allowed create template'
+allowed write template file:
+  title: 'Allowed write template file'
+  description: 'Allowed write template file'
