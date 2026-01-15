@@ -9,17 +9,20 @@ use Drupal\Core\Menu\MenuActiveTrail;
 /**
  * Alter the service container to use a custom class.
  */
-class ContextServiceProvider extends ServiceProviderBase {
+class ContextServiceProvider extends ServiceProviderBase
+{
 
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container)
+  {
     // Override the menu active trail with a new class.
     $definition = $container->getDefinition('menu.active_trail');
     if ($definition->getClass() == MenuActiveTrail::class) {
       $definition->setClass('Drupal\context\ContextMenuActiveTrail');
       $definition->addArgument($container->getDefinition('context.manager'));
+      $definition->setLazy(FALSE);
     }
   }
 
