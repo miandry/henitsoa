@@ -13,6 +13,7 @@ class CarnetHenitsoa
         $entity_type_manager = \Drupal::service('entity_type.manager');
         $media_name = "carnet.docx" ;
         $query = $entity_type_manager->getStorage('media')->getQuery();
+        $query->accessCheck(FALSE);
         $query->condition('name', $media_name);
         $entity_ids = $query->execute();
         if(empty( $entity_ids)){

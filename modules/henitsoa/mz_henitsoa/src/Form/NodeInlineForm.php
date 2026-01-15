@@ -7,14 +7,16 @@ use Drupal\inline_entity_form\EntityInlineForm;
 /**
  * Node inline form handler.
  */
-class NodeInlineForm extends EntityInlineForm {
+class NodeInlineForm extends EntityInlineForm
+{
 
   use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
    */
-  public function getEntityTypeLabels() {
+  public function getEntityTypeLabels()
+  {
     $labels = [
       'singular' => $this->t('node'),
       'plural' => $this->t('nodes'),
@@ -25,9 +27,9 @@ class NodeInlineForm extends EntityInlineForm {
   /**
    * {@inheritdoc}
    */
-  public function getTableFields($bundles) {
+  public function getTableFields($bundles)
+  {
     $fields = parent::getTableFields($bundles);
-    var_dump("mz_henitsoa");
     $fields['status'] = [
       'type' => 'field',
       'label' => $this->t('Status'),
