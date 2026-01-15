@@ -1,0 +1,55 @@
+.DS_Store
+.idea/*
+sites
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.log
+
+# Composer
+/vendor/
+composer.lock
+
+# Drupal files
+/sites/*/settings.php
+/sites/*/settings.local.php
+/sites/*/services.yml
+/sites/*/services.local.yml
+
+# Files directory (uploads, cache, temp)
+/sites/*/files/
+!/sites/default/files/.htaccess
+
+# PHPUnit / tests
+/phpunit.xml
+/phpunit.result.cache
+
+# Node / frontend
+/node_modules/
+/dist/
+/build/
+
+# Drush
+/drush/contrib/
+/drush/sites/
+
+# PHP cache
+/sites/*/files/php/
+sites/*/files/styles/
+
+# Environment
+.env
+.env.local
+
+# Backup / dump
+*.sql
+*.sql.gz
+*.tar.gz
+
+# Temporary
+/tmp/
+/cache/
+

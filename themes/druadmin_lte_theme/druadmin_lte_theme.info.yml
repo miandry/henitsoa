@@ -1,0 +1,26 @@
+name: DruAdminLTE
+description: 'Drupal 8 admin theme based on AdminLTE by Almaseed Studio'
+base theme: classy
+package: Custom
+type: theme
+# version: 1.0.0
+core_version_requirement: ^8.8 || ^9
+libraries:
+  - druadmin_lte_theme/base
+regions:
+  brand: Site Branding
+  header: Header
+  top: Top
+  content: Content
+  bottom: Bottom
+  sidebar: Sidebar
+  footer: Footer
+  navbar_right_notifications: Navbar Right Notifications
+features:
+  - favicon
+  - logo
+
+# Information added by Drupal.org packaging script on 2022-05-21
+version: '8.x-3.0'
+project: 'druadmin_lte_theme'
+datestamp: 1653146940
